@@ -1,0 +1,118 @@
+.upload-excel-container {
+    max-width: 70%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Tarjeta de carga */
+.upload-card {
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.upload-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Zona de carga de archivos */
+.upload-zone {
+    border: 2px dashed rgba(var(--v-theme-primary), 0.3);
+    transition: all 0.3s ease;
+    background-color: rgba(var(--v-theme-surface), 0.5);
+    min-height: 220px;
+    cursor: pointer;
+}
+
+.upload-zone:hover {
+    border-color: rgba(var(--v-theme-primary), 0.6);
+    background-color: rgba(var(--v-theme-primary), 0.02);
+}
+
+.upload-zone-drag {
+    border-color: rgba(var(--v-theme-primary), 0.8);
+    background-color: rgba(var(--v-theme-primary), 0.05);
+    transform: scale(1.01);
+}
+
+.upload-zone-has-file {
+    border-color: rgba(var(--v-theme-success), 0.5);
+    background-color: rgba(var(--v-theme-success), 0.02);
+}
+
+.upload-zone-error {
+    border-color: rgba(var(--v-theme-error), 0.5);
+    background-color: rgba(var(--v-theme-error), 0.02);
+}
+
+.upload-icon {
+    transition: all 0.3s ease;
+}
+
+.upload-zone:hover .upload-icon {
+    transform: translateY(-5px);
+}
+
+/* Botón de carga */
+.upload-button {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.upload-button::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+}
+
+.upload-button:not(:disabled):hover::after {
+    animation: ripple 1s ease-out;
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+    }
+    20% {
+        transform: scale(25, 25);
+        opacity: 0.3;
+    }
+    100% {
+        opacity: 0;
+        transform: scale(40, 40);
+    }
+}
+
+/* Lista de validación */
+.validation-list {
+    background-color: rgba(var(--v-theme-background), 0.5);
+    border: 1px solid rgba(var(--v-theme-outline), 0.1);
+}
+
+.file-tip-alert {
+    border-width: 4px;
+}
+
+/* Icono de archivo */
+.file-icon-avatar {
+    transition: all 0.3s ease;
+}
+
+.file-preview:hover .file-icon-avatar {
+    transform: scale(1.05);
+}
+
+/* Previsualizaciones del archivo */
+.file-preview {
+    transition: all 0.3s ease;
+}

@@ -1,0 +1,308 @@
+.widget-panel {
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+
+.widget-title-container {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.widget-icon {
+    margin-right: 6px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.widget-title {
+    flex-grow: 1;
+    font-size: 16px;
+}
+.widget-icon {
+    font-size: 20px;
+}
+
+.widget-actions {
+    margin-left: auto;
+}
+
+.widget-settings {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #6c757d;
+    padding: 0;
+    font-size: 14px;
+}
+
+.widget-settings:hover {
+    color: #343a40;
+}
+
+.widget-content {
+    padding: 15px;
+    flex-grow: 1;
+    overflow: auto;
+}
+
+.widget-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #adb5bd;
+}
+
+.widget-icon-large {
+    font-size: 48px;
+    margin-bottom: 10px;
+    color: #ced4da;
+}
+
+.widget-placeholder-text {
+    margin: 0;
+    color: #6c757d;
+    font-size: 14px;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.grid-stack {
+    background: #f9f9f9;
+    min-height: 600px;
+    position: relative;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px dashed #ddd;
+}
+
+.grid-stack-item {
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.grid-stack-item-content {
+    background: #fff;
+    color: #333;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    padding: 0;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.grid-stack-item:hover {
+    z-index: 11;
+}
+
+.widget-header {
+    padding: 8px 15px;
+    cursor: move;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    background-color: #f5f5f5;
+    border-bottom: 1px solid #ddd;
+    flex-shrink: 0;
+}
+
+.widget-content {
+    padding: 10px;
+    overflow: auto;
+    flex-grow: 1;
+    position: relative;
+}
+
+/* Contenedor de gráficos */
+.widget-chart-container {
+    width: 100%;
+    height: 100%;
+    min-height: 150px;
+}
+
+/* Estilos para modo de vista previa */
+.preview-mode .grid-stack-item {
+    cursor: default;
+}
+
+.preview-mode .widget-settings {
+    display: none;
+}
+
+.preview-mode .widget-header {
+    cursor: default;
+}
+
+/* Estilos para vista de lista */
+.grid-stack.list-view {
+    display: flex;
+    flex-direction: column;
+}
+
+.grid-stack.list-view .grid-stack-item {
+    width: 100% !important;
+    margin-bottom: 15px;
+    position: relative !important;
+    left: 0 !important;
+    top: 0 !important;
+    transform: none !important;
+}
+
+.grid-stack.list-view .grid-stack-item-content {
+    height: 300px !important;
+}
+
+/* Estilos para placeholders de widgets */
+.widget-placeholder {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #999;
+    text-align: center;
+    width: 80%;
+}
+
+.widget-placeholder i {
+    margin-bottom: 10px;
+}
+
+/* Tarjetas de métricas */
+.metric-card {
+    text-align: center;
+    padding: 15px;
+    border-radius: 4px;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+}
+
+.metric-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.metric-icon {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: #337ab7;
+}
+
+.metric-value {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.metric-name {
+    font-size: 14px;
+    color: #777;
+}
+
+/* Control de solapamiento */
+.grid-stack > .grid-stack-item {
+    min-width: 50px;
+    min-height: 50px;
+}
+
+.grid-stack > .grid-stack-item[gs-w="1"] {
+    min-width: 100px;
+}
+
+.grid-stack > .grid-stack-item[gs-h="1"] {
+    min-height: 100px;
+}
+
+/* Animaciones */
+.grid-stack-item {
+    transition: opacity 0.3s;
+}
+
+.grid-stack-item.ui-draggable-dragging {
+    opacity: 0.8;
+}
+
+/* Estilos para panel de herramientas lateral */
+.widget-types .list-group-item {
+    cursor: move;
+    transition: all 0.3s ease;
+}
+
+.widget-types .list-group-item:hover {
+    background-color: #f5f5f5;
+    transform: translateX(5px);
+}
+
+.widget-types .list-group-item i {
+    margin-right: 10px;
+}
+
+/* Estilos para modal de configuración */
+.modal-lg {
+    max-width: 900px;
+}
+
+#widget-settings-modal .tab-content {
+    padding-top: 20px;
+}
+
+#widget-config-json {
+    font-family: monospace;
+    font-size: 12px;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+    .grid-stack {
+        min-height: 400px;
+    }
+
+    .widget-content {
+        padding: 5px;
+    }
+
+    .metric-card {
+        padding: 10px;
+    }
+
+    .metric-value {
+        font-size: 18px;
+    }
+
+    .metric-name {
+        font-size: 12px;
+    }
+}
+
+/* Estilo para elementos arrastrables */
+.widget-type {
+    cursor: grab;
+    transition: all 0.2s ease;
+}
+
+.widget-type.dragging {
+    opacity: 0.7;
+    transform: scale(0.95);
+}
+
+/* Estilo para la zona de destino */
+#layout-grid.drop-target {
+    outline: 2px dashed #337ab7;
+    background-color: rgba(51, 122, 183, 0.1);
+}

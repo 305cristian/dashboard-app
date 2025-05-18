@@ -1,0 +1,64 @@
+.dashboard-view-container {
+    width: 100%;
+    min-height: 600px;
+    background-color: #f8f8f8;
+}
+
+.widget-panel {
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    background-color: #fff;
+}
+
+.widget-header {
+    padding: 8px 12px;
+    background-color: #f5f5f5;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+}
+
+.widget-title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.widget-content {
+    padding: 16px;
+    flex: 1;
+    overflow: auto;
+    position: relative;
+}
+
+.metric-card {
+    text-align: center;
+    padding: 10px;
+    margin-bottom: 15px;
+}
+
+.metric-icon {
+    font-size: 24px;
+    margin-bottom: 5px;
+    color: var(--v-primary-base);
+}
+
+.metric-value {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.metric-name {
+    font-size: 12px;
+    color: #777;
+}
+
+.huge-value {
+    font-size: 36px;
+    font-weight: bold;
+}
