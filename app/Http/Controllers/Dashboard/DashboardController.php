@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Session;
 use App\Models\ExcelModel;
 use App\Models\DashboardModel;
 use App\Models\LayoutModel;
+use App\Models\TempDataJson;
 
 
 class DashboardController extends Controller
@@ -18,6 +19,7 @@ class DashboardController extends Controller
     protected $excelModel;
     protected $dashboardModel;
     protected $layoutModel;
+    protected $tempDataJson;
 
     /**
      * Constructor con inyección de dependencias
@@ -27,26 +29,42 @@ class DashboardController extends Controller
         $this->excelModel = new ExcelModel();
         $this->dashboardModel = new DashboardModel();
         $this->layoutModel = new LayoutModel();
+        $this->tempDataJson = new TempDataJson();
     }
 
-    public function index(){
-        $send=[
-            "title"=>"Dashboards",
+    public function index()
+    {
+        $send = [
+            "title" => "Dashboards",
             "listaWidgets" => $this->layoutModel->getUserLayouts(),
-            ];
+        ];
         return Inertia::render('dashboard/viewHomeDashboard', $send);
     }
 
 
-    public function viewCreate(Request $request): Response
+    public function viewCreate(Request $request)
     {
         $send['title'] = 'Dashboards APP';
-        // Verificar si existe un archivo cargado en la sesión
         $data['file_loaded'] = Session::has('excel_file_path');
 
         if ($data['file_loaded']) {
             $send = [
-                "title" => "Dashboards Múltiples",
+                "listaDimensions" => $this->dashboardModel->getDimensions(),
+                "listaMetrics" => $this->dashboardModel->getMetrics(),
+                "listaTemplate" => $this->layoutModel->getLayoutTemplates()
+            ];
+        } else {
+            //Obtenemos los datos guardados en la db
+            $registro = $this->tempDataJson::orderByDesc('id')->first();
+
+            $headerDash = $registro ? $registro->json_head : null;
+            $dataDash = $registro ? $registro->json_data : null;
+
+            // Guardar en la sesión para uso temporal
+            Session::put('excel_headers', $headerDash);
+            Session::put('excel_data', $dataDash);
+
+            $send = [
                 "listaDimensions" => $this->dashboardModel->getDimensions(),
                 "listaMetrics" => $this->dashboardModel->getMetrics(),
                 "listaTemplate" => $this->layoutModel->getLayoutTemplates()
@@ -60,6 +78,48 @@ class DashboardController extends Controller
     public function viewUpload(Request $request): Response
     {
         return Inertia::render('dashboard/viewUploadFile');
+    }
+
+
+    public function processDataFromReport(Request $request)
+    {
+
+        $datos = $request->input('datos');
+
+        if (empty($datos)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No se proporcionaron datos válidos o no existen'
+            ]);
+        }
+
+        // Procesar los datos
+        $result = $this->excelModel->processDataFromDatabase($datos);
+
+        if ($result) {
+
+            $response = [
+                'status' => 'success',
+                'message' => 'Información cargado exitosamente.',
+                'redirectUrl' => "/dashboard/create",
+            ];
+
+            $this->tempDataJson::truncate(); //Elimino todos los datos y me quedo solo con el último
+            $this->tempDataJson::create([
+                'json_data' => Session::get('excel_data', []),
+                'json_head' => Session::get('excel_headers', [])
+            ]);
+
+        } else {
+
+            $response = [
+                'status' => 'error',
+                'message' => 'Error al procesar el archivo.',
+            ];
+        }
+
+        return response()->json($response);
+
     }
 
     public function uploadFile(Request $request)
@@ -87,20 +147,20 @@ class DashboardController extends Controller
                 Session::put('excel_file_path', $fullPath);
                 $response = [
                     'status' => 'success',
-                    'msg'=>'Archivo cargado exitosamente.',
+                    'msg' => 'Archivo cargado exitosamente.',
                     'redirectUrl' => "/dashboard/create",
                 ];
             } else {
                 $response = [
                     'status' => 'error',
-                    'msg'=>'Error al procesar el archivo.',
+                    'msg' => 'Error al procesar el archivo.',
                 ];
             }
 
         } else {
             $response = [
                 'status' => 'error',
-                'msg'=>'Error al cargar el archivo.',
+                'msg' => 'Error al cargar el archivo.',
             ];
 
         }
@@ -129,7 +189,7 @@ class DashboardController extends Controller
 
         try {
             // Obtener datos filtrados del modelo
-            $data =  $this->dashboardModel->getFilteredData($dimensions, $metrics, $filters, $dateRange);
+            $data = $this->dashboardModel->getFilteredData($dimensions, $metrics, $filters, $dateRange);
 
             // Verificar si hay datos
             if (empty($data['data'])) {
@@ -141,7 +201,7 @@ class DashboardController extends Controller
             }
 
             // Preparar datos para el tipo de visualización
-            $result = $this->prepareVisualizationData($data, $dimensions, $metrics, $chartType, $limit,$order);
+            $result = $this->prepareVisualizationData($data, $dimensions, $metrics, $chartType, $limit, $order);
 
             return response()->json($result);
         } catch (\Exception $e) {
@@ -163,16 +223,16 @@ class DashboardController extends Controller
 
         if ($sortMetric !== null) {
             usort($data['data'], function ($a, $b) use ($sortMetric, $order) {
-                if($order ==='desc'){
+                if ($order === 'desc') {
                     return floatval($b[$sortMetric]) <=> floatval($a[$sortMetric]); // Descendente
-                }else{
+                } else {
                     return floatval($a[$sortMetric]) <=> floatval($b[$sortMetric]); // Ascendente
                 }
 
             });
 
             $limitedData = array_slice($data['data'], 0, $limite);//Agarra los $limit mas altos
-        }else{
+        } else {
             // Limitar datos si es necesario
             $limitedData = array_slice($data['data'], 0, $limite); // Agarra los $limit primeros registros
         }
@@ -215,8 +275,7 @@ class DashboardController extends Controller
                 'series' => $series,
                 'count' => count($data['data'])
             ];
-        }
-        // Para tablas
+        } // Para tablas
         elseif ($chartType === 'table') {
 
             return [
@@ -224,8 +283,7 @@ class DashboardController extends Controller
                 'data' => $limitedData,
                 'count' => count($data['data'])
             ];
-        }
-        // Para tarjetas
+        } // Para tarjetas
         elseif ($chartType === 'card') {
             $aggregatedData = [];
 
@@ -276,7 +334,7 @@ class DashboardController extends Controller
 
         // Devolver respuesta JSON
         return response()->json([
-            'success' => (bool) $result,
+            'success' => (bool)$result,
             'layout_id' => $result
         ]);
     }
@@ -297,13 +355,13 @@ class DashboardController extends Controller
         $dimensions = $this->dashboardModel->getDimensions();
         $metrics = $this->dashboardModel->getMetrics();
 
-        $send=[
+        $send = [
             'pageTitle' => 'Dashboard',
             'title' => 'Ver Dashboard',
             'layout' => $layout,
             'dimensions' => $dimensions,
             'metrics' => $metrics
-            ];
+        ];
 
         return Inertia::render('dashboard/viewPreview', $send);
     }

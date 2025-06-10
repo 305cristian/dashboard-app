@@ -132,7 +132,7 @@ export default {
                         confirmButtonText: 'OK'
                     }).then((result) => {
                         if (result.isConfirmed) {
-                             window.location.href = '/dashboard/create'; // Cambia esto por tu URL
+                             window.location.href = '/dashboard/create';
                         }
                     });
                 }else{

@@ -44,7 +44,6 @@ class ExcelModel extends Model
             $worksheet = $spreadsheet->getActiveSheet();
 
 
-
             // Obtener las dimensiones del documento
             $highestRow = $worksheet->getHighestRow();
             $highestColumn = $worksheet->getHighestColumn();
@@ -95,6 +94,59 @@ class ExcelModel extends Model
     }
 
     /**
+     * Procesa los datos directamente del array de la base de datos
+     *
+     * @param array $databaseData Array de datos de la base de datos
+     * @return bool
+     */
+    public function processDataFromDatabase($databaseData)
+    {
+        try {
+            // Verificar que tenemos datos para procesar
+            if (empty($databaseData) || !is_array($databaseData)) {
+                throw new Exception('No se proporcionaron datos válidos');
+            }
+
+            // Si hay datos, extraer los encabezados del primer elemento
+            if (count($databaseData) > 0) {
+                // Obtener las claves del primer elemento como encabezados
+                $firstItem = reset($databaseData);
+
+
+
+                // Filtrar encabezados para excluir arrays anidados
+                $this->headers = [];
+                foreach ($firstItem as $key => $value) {
+                    if (!is_array($value)) {
+                        $this->headers[] = $key;
+                    }
+                }
+
+                // Preparar los datos para la sesión, excluyendo arrays anidados
+                $this->excelData = [];
+                foreach ($databaseData as $item) {
+                    $rowData = [];
+                    foreach ($this->headers as $header) {
+                        $rowData[$header] = $item[$header] ?? null;
+                    }
+                    $this->excelData[] = $rowData;
+                }
+
+            } else {
+                throw new Exception('No hay datos disponibles para procesar');
+            }
+
+            // Guardar datos en la sesión
+            $this->saveProcessedData();
+
+            return true;
+        } catch (Exception $e) {
+            Log::error('Error al procesar datos: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
      * Encuentra la fila que contiene los encabezados
      */
     private function findHeaderRow($worksheet, $highestRow, $highestColumnIndex)
@@ -118,7 +170,7 @@ class ExcelModel extends Model
             // Si hay al menos 5 celdas no vacías, podría ser la fila de encabezados
             if ($nonEmptyCells >= 5) {
                 // Comprobar si los encabezados incluyen palabras clave esperadas
-                $headerKeywords = ['FECHA', 'CODIGO', 'PRODUCTO', 'KARDEX', 'GRUPO','TOTAL','PRECIO','PRICE'];
+                $headerKeywords = ['FECHA', 'CODIGO', 'PRODUCTO', 'KARDEX', 'GRUPO', 'TOTAL', 'PRECIO', 'PRICE'];
                 $matches = 0;
 
                 foreach ($potentialHeaders as $header) {
@@ -146,6 +198,7 @@ class ExcelModel extends Model
      */
     private function saveProcessedData()
     {
+
         // Guardar en la sesión para uso temporal
         Session::put('excel_headers', $this->headers);
         Session::put('excel_data', $this->excelData);
@@ -231,7 +284,7 @@ class ExcelModel extends Model
         $filename = 'dashboard_export_' . date('Y-m-d_H-i-s') . '.xlsx';
 
         // En Laravel, usamos estos headers para descargar
-        return response()->streamDownload(function() use ($writer) {
+        return response()->streamDownload(function () use ($writer) {
             $writer->save('php://output');
         }, $filename, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -247,7 +300,7 @@ class ExcelModel extends Model
     {
         $filename = 'dashboard_export_' . date('Y-m-d_H-i-s') . '.csv';
 
-        return response()->streamDownload(function() use ($data) {
+        return response()->streamDownload(function () use ($data) {
             $output = fopen('php://output', 'w');
 
             // Añadir encabezados

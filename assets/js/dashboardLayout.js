@@ -9,7 +9,9 @@ export default {
         listaDimensions: Array,
         listaMetrics: Array,
         layout: Object,
-        listaTemplate: Array
+        listaTemplate: Array,
+        dataDash:String,
+        headDash:Array
     },
     name: 'DashboardEditor',
     data() {
@@ -184,6 +186,9 @@ export default {
         this.initGridStack();
         this.initDraggableItems();
         this.initDropZone();
+
+        console.log('mainc',this.dataDash)
+        console.log('headx ',this.headDash)
     },
     methods: {
 
