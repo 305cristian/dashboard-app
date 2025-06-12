@@ -211,9 +211,16 @@ class ExcelModel extends Model
     public function getProcessedData()
     {
         if (empty($this->excelData)) {
+
             $this->excelData = Session::get('excel_data', []);
             $this->headers = Session::get('excel_headers', []);
+
         }
+//        echo '<pre>';
+//        var_dump( $this->headers);
+//        echo '</pre>';
+
+
 
         return $this->excelData;
     }

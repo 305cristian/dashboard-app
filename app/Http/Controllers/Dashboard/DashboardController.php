@@ -42,37 +42,44 @@ class DashboardController extends Controller
     }
 
 
-    public function viewCreate(Request $request)
+    public function viewCreateDashboard(Request $request):Response
     {
-        $send['title'] = 'Dashboards APP';
-        $data['file_loaded'] = Session::has('excel_file_path');
 
-        if ($data['file_loaded']) {
-            $send = [
-                "listaDimensions" => $this->dashboardModel->getDimensions(),
-                "listaMetrics" => $this->dashboardModel->getMetrics(),
-                "listaTemplate" => $this->layoutModel->getLayoutTemplates()
-            ];
-        } else {
-            //Obtenemos los datos guardados en la db
-            $registro = $this->tempDataJson::orderByDesc('id')->first();
+        //Obtenemos los datos guardados en la db
+        $registro = $this->tempDataJson::orderByDesc('id')->first();
 
-            $headerDash = $registro ? $registro->json_head : null;
-            $dataDash = $registro ? $registro->json_data : null;
+        $headerDash = $registro ? $registro->json_head : null;
+        $dataDash = $registro ? $registro->json_data : null;
 
-            // Guardar en la sesión para uso temporal
-            Session::put('excel_headers', $headerDash);
-            Session::put('excel_data', $dataDash);
+        // Guardar en la sesión para uso temporal
+        Session::put('excel_headers', $headerDash);
+        Session::put('excel_data', $dataDash);
 
-            $send = [
-                "listaDimensions" => $this->dashboardModel->getDimensions(),
-                "listaMetrics" => $this->dashboardModel->getMetrics(),
-                "listaTemplate" => $this->layoutModel->getLayoutTemplates()
-            ];
-        }
+        $send = [
+            "title" => "Dashboards APP -API",
+            "listaDimensions" => $this->dashboardModel->getDimensions(),
+            "listaMetrics" => $this->dashboardModel->getMetrics(),
+            "listaTemplate" => $this->layoutModel->getLayoutTemplates()
+        ];
+
+//        dd(session()->all());
 
 
         return Inertia::render('dashboard/viewNewDashboard', $send);
+
+//        $send['title']="Dashboards APP";
+//        $data['file_loaded'] = Session::has('excel_file_path');
+//
+//        if ($data['file_loaded']) {
+//            $send = [
+//                "listaDimensions" => $this->dashboardModel->getDimensions(),
+//                "listaMetrics" => $this->dashboardModel->getMetrics(),
+//                "listaTemplate" => $this->layoutModel->getLayoutTemplates()
+//            ];
+//
+//        }
+//        return Inertia::render('dashboard/viewNewDashboard', $send);
+
     }
 
     public function viewUpload(Request $request): Response
@@ -80,8 +87,7 @@ class DashboardController extends Controller
         return Inertia::render('dashboard/viewUploadFile');
     }
 
-
-    public function processDataFromReport(Request $request)
+    public function processDataFromReportApi(Request $request)
     {
 
         $datos = $request->input('datos');
@@ -101,7 +107,7 @@ class DashboardController extends Controller
             $response = [
                 'status' => 'success',
                 'message' => 'Información cargado exitosamente.',
-                'redirectUrl' => "/dashboard/create",
+                'redirectUrl' => "/dashboard/createDashboard",
             ];
 
             $this->tempDataJson::truncate(); //Elimino todos los datos y me quedo solo con el último
@@ -145,11 +151,19 @@ class DashboardController extends Controller
             if ($result) {
                 // Guardar ruta del archivo en la sesión
                 Session::put('excel_file_path', $fullPath);
+
                 $response = [
                     'status' => 'success',
                     'msg' => 'Archivo cargado exitosamente.',
-                    'redirectUrl' => "/dashboard/create",
+                    'redirectUrl' => "/dashboard/createDashboard",
                 ];
+
+                $this->tempDataJson::truncate(); //Elimino todos los datos y me quedo solo con el último
+                $this->tempDataJson::create([
+                    'json_data' => Session::get('excel_data', []),
+                    'json_head' => Session::get('excel_headers', [])
+                ]);
+
             } else {
                 $response = [
                     'status' => 'error',
@@ -169,6 +183,7 @@ class DashboardController extends Controller
 
     public function getWidgetData(Request $request)
     {
+//        dd(Session::all());
 
         $dimensions = $request->input('dimensions');
         $metrics = $request->input('metrics');
@@ -202,6 +217,7 @@ class DashboardController extends Controller
 
             // Preparar datos para el tipo de visualización
             $result = $this->prepareVisualizationData($data, $dimensions, $metrics, $chartType, $limit, $order);
+
 
             return response()->json($result);
         } catch (\Exception $e) {
@@ -337,6 +353,18 @@ class DashboardController extends Controller
             'success' => (bool)$result,
             'layout_id' => $result
         ]);
+    }
+
+    public function delete($id)
+    {
+       $delete = $this->layoutModel->deleteLayout($id);
+
+       if($delete){
+           return response()->json([
+               'success' => true,
+           ]);
+       }
+
     }
 
 

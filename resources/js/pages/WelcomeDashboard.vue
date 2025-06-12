@@ -82,7 +82,7 @@
                                                 color="primary"
                                                 size="x-large"
                                                 block
-                                                :href="route('dash.create')"
+                                                :href="route('dash.createDashboard')"
                                                 class="py-3 text-subtitle-1 rounded-pill"
                                                 elevation="3"
                                                 @click="simulateLoading"

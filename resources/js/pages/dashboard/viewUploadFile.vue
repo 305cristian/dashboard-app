@@ -24,7 +24,7 @@
                        prepend-icon="mdi-login">
                     Home
                 </v-btn>
-                <v-btn class="mx-1" color="secondary" variant="elevated" :href="route('dash.create') "
+                <v-btn class="mx-1" color="secondary" variant="elevated" :href="route('dash.createDashboard') "
                        prepend-icon="mdi-account-plus">
                     Crear Dashboard
                 </v-btn>

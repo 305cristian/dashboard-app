@@ -44,7 +44,7 @@
           <v-list-item-title>Home</v-list-item-title>
         </v-list-item>
 
-        <v-list-item :href="route('dash.create')">
+        <v-list-item :href="route('dash.createDashboard')">
           <template v-slot:prepend>
             <v-icon>mdi-view-dashboard-outline</v-icon>
           </template>
@@ -77,7 +77,7 @@
               <v-btn
                 color="primary"
                 prepend-icon="mdi-plus"
-                :href="route('dash.create')"
+                :href="route('dash.createDashboard')"
               >
                 Create Dashboard
               </v-btn>

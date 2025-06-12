@@ -1,7 +1,9 @@
+import axios from 'axios';
+
 export default {
 
-    props:{
-        listaWidgets:Array
+    props: {
+        listaWidgets: Array
     },
 
     name: 'ViewDashboards',
@@ -15,12 +17,12 @@ export default {
             deleteDialog: false,
             selectedDashboard: null,
             tableHeaders: [
-                { title: 'Name', key: 'name', sortable: true },
-                { title: 'Category', key: 'category', sortable: true },
-                { title: 'Created', key: 'created_at', sortable: true },
-                { title: 'Updated', key: 'updated_at', sortable: true },
-                { title: 'Widgets', key: 'count_widgets', sortable: true },
-                { title: 'Actions', key: 'actions', sortable: false }
+                {title: 'Name', key: 'name', sortable: true},
+                {title: 'Category', key: 'category', sortable: true},
+                {title: 'Created', key: 'created_at', sortable: true},
+                {title: 'Updated', key: 'updated_at', sortable: true},
+                {title: 'Widgets', key: 'count_widgets', sortable: true},
+                {title: 'Actions', key: 'actions', sortable: false}
             ],
             filterCategories: [
                 '',
@@ -31,14 +33,14 @@ export default {
                 'HR'
             ],
             sortOptions: [
-                { title: 'Last Updated', value: 'updated' },
-                { title: 'Recently Created', value: 'created' },
-                { title: 'Name (A-Z)', value: 'name-asc' },
-                { title: 'Name (Z-A)', value: 'name-desc' }
+                {title: 'Last Updated', value: 'updated'},
+                {title: 'Recently Created', value: 'created'},
+                {title: 'Name (A-Z)', value: 'name-asc'},
+                {title: 'Name (Z-A)', value: 'name-desc'}
             ],
             // Sample data - in real application this would come from your API
 
-            dashboards:this.listaWidgets,
+            dashboards: this.listaWidgets,
 
         }
     },
@@ -106,7 +108,7 @@ export default {
             console.log('Editing dashboard:', dashboard.id);
             this.$router.push({
                 name: 'create-dashboard',
-                params: { id: dashboard.id }
+                params: {id: dashboard.id}
             });
         },
         confirmDeleteDashboard(dashboard) {
@@ -116,9 +118,14 @@ export default {
         deleteDashboard() {
             // In a real application, call your API to delete the dashboard
             console.log('Deleting dashboard:', this.selectedDashboard.id);
-            this.dashboards = this.dashboards.filter(d => d.id !== this.selectedDashboard.id);
-            this.deleteDialog = false;
-            this.selectedDashboard = null;
+            axios.delete("/dashboard/delete/" + this.selectedDashboard.id).then(response => {
+                if (response.data.success) {
+                    this.dashboards = this.dashboards.filter(d => d.id !== this.selectedDashboard.id);
+                    this.deleteDialog = false;
+                    this.selectedDashboard = null;
+                }
+            });
+
         }
     }
 }

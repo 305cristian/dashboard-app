@@ -5,8 +5,8 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::group(['prefix' => 'dashboard'], function () {
-    Route::get('create', [DashboardController::class, 'viewCreate'])
-        ->name('dash.create');
+    Route::get('createDashboard', [DashboardController::class, 'viewCreateDashboard'])
+        ->name('dash.createDashboard');
 
     Route::get('upload', [DashboardController::class, 'viewUpload'])
         ->name('dash.upload');
@@ -26,5 +26,6 @@ Route::group(['prefix' => 'dashboard'], function () {
     Route::post('save', [DashboardController::class, 'save'])
         ->name('dash.save');
 
-
+    Route::delete('delete/{id}', [DashboardController::class, 'delete'])
+        ->name('dash.delete');
 });

@@ -145,6 +145,9 @@ class DashboardModel extends Model
 
         $data = $this->excelModel->getProcessedData();
 
+//        var_dump($data);
+//        die();
+
         if (empty($data)) {
             return [
                 'success' => false,
@@ -211,6 +214,7 @@ class DashboardModel extends Model
         $groupedData = [];
         $chartData = [];
 
+
         // Si hay dimensiones, agrupar por ellas
         if (!empty($dimensions)) {
             foreach ($filteredData as $row) {
@@ -230,6 +234,7 @@ class DashboardModel extends Model
                         'count' => 0
                     ];
                 }
+//
 
                 // Calcular métricas
                 foreach ($metrics as $metric) {
@@ -266,6 +271,8 @@ class DashboardModel extends Model
 
             $chartData[] = array_merge(['count' => $count], $totals);
         }
+
+
 
         return [
             'success' => true,

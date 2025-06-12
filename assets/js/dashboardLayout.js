@@ -3,6 +3,15 @@ import Highcharts from 'highcharts';
 import 'gridstack/dist/gridstack.min.css';
 import axios from 'axios';
 
+// const token = document.head.querySelector('meta[name="csrf-token"]');
+// if (token) {
+//     console.log('siii',token.getAttribute('content'));
+//     axios.defaults.headers.common['X-CSRF-TOKEN'] = token.getAttribute('content');
+// } else {
+//     console.error('CSRF token not found');
+// }
+// axios.defaults.withCredentials = true; // muy importante si estás usando cookies de sesión
+
 export default {
     props: {
         title: String,
@@ -10,8 +19,6 @@ export default {
         listaMetrics: Array,
         layout: Object,
         listaTemplate: Array,
-        dataDash:String,
-        headDash:Array
     },
     name: 'DashboardEditor',
     data() {
@@ -187,8 +194,6 @@ export default {
         this.initDraggableItems();
         this.initDropZone();
 
-        console.log('mainc',this.dataDash)
-        console.log('headx ',this.headDash)
     },
     methods: {
 
